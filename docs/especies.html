@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Espécies de cetáceos · Portugal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: catálogo em grelha de fichas, com filtros numa linha por cima; mesmos tokens da página de análise. */
+:root {
+  --bg: #f4f7f8; --surface: #fdfefe; --ink: #0f1b26; --ink-2: #4b5a68; --ink-3: #7a8794;
+  --line: #dbe3e8; --accent: #1c5cab; --h4: #3987e5; --h6: #0d366b; --photo-bg: #e6ecef;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c141b; --surface: #111c25; --ink: #e6edf2; --ink-2: #a3b3c1; --ink-3: #718292;
+    --line: #22313d; --accent: #6da7ec; --h4: #5598e7; --h6: #dcebfd; --photo-bg: #1a2731;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c141b; --surface: #111c25; --ink: #e6edf2; --ink-2: #a3b3c1; --ink-3: #718292;
+  --line: #22313d; --accent: #6da7ec; --h4: #5598e7; --h6: #dcebfd; --photo-bg: #1a2731;
+  color-scheme: dark;
+}
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1.0625rem; line-height: 1.6; padding-inline: 16px; padding-block: 0 4rem; }
+.wrap { max-width: 72rem; margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+.wrap > * { min-width: 0; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; color: var(--ink); }
+h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.04; font-weight: 800; letter-spacing: -0.02em; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 2px; }
+.eyebrow, .label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.25rem; flex-wrap: wrap; }
+.nav { display: flex; gap: 1.25rem; font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.nav a { color: var(--ink-2); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+.nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
+.nav a:hover { color: var(--ink); }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.lang button { font: 500 0.78rem var(--mono); letter-spacing: 0.06em; color: var(--ink-2); background: transparent; border: 0; padding: 0.3rem 0.75rem; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+header.hero { padding-top: clamp(1rem, 4vw, 2.5rem); display: grid; gap: 1.25rem; }
+.lead { font-size: 1.15rem; color: var(--ink-2); max-width: 40rem; }
+
+/* resumo da Lista Vermelha: uma barra empilhada com as categorias */
+.rl { display: grid; gap: 0.5rem; max-width: 46rem; }
+.rl-bar { display: flex; height: 30px; border-radius: 6px; overflow: hidden; gap: 2px; background: var(--bg); }
+.rl-bar button { border: 0; padding: 0; cursor: pointer; font: 700 0.75rem var(--mono); color: #0f1b26; min-width: 22px; }
+.rl-bar button[aria-pressed="false"].dim { opacity: 0.3; }
+.rl-key { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; font-family: var(--mono); font-size: 0.75rem; color: var(--ink-2); }
+.rl-key span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.rl-key i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 1rem 1.75rem; align-items: flex-end; padding-block: 1rem; border-block: 1px solid var(--line); }
+.control { display: grid; gap: 0.4rem; min-width: 0; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { font: 500 0.88rem var(--display); color: var(--ink-2); background: transparent; border: 0; padding: 0.45rem 0.85rem; cursor: pointer; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+select, input[type="search"] { font: 500 0.9rem var(--display); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.6rem; max-width: 100%; }
+input[type="search"] { width: 14rem; }
+.count { margin-left: auto; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); align-self: center; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr)); gap: 1.25rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.photo { position: relative; aspect-ratio: 3 / 2; background: var(--photo-bg); display: grid; place-items: center; overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo.ilustr { background: #f4f6f7; }
+.photo.ilustr img { object-fit: contain; padding: 0.5rem; }
+.photo svg { width: 70%; color: var(--ink-3); }
+.badge { position: absolute; left: 10px; top: 10px; display: inline-flex; align-items: center; gap: 0.4rem; background: rgb(15 27 38 / 0.82); color: #f4f7f8; border-radius: 6px; padding: 0.2rem 0.5rem 0.2rem 0.25rem; font: 500 0.72rem var(--mono); }
+.badge b { font-weight: 700; color: #0f1b26; border-radius: 4px; padding: 0.05rem 0.35rem; }
+.body { padding: 0.9rem 1rem 1rem; display: grid; gap: 0.6rem; align-content: start; }
+.names h2 { font-size: 1.12rem; font-weight: 700; }
+.names .sci { font-style: italic; color: var(--ink-2); font-size: 0.95rem; }
+.taxo { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); }
+.obs { display: flex; flex-wrap: wrap; gap: 0.25rem 0.9rem; font-family: var(--mono); font-size: 0.75rem; color: var(--ink-2); }
+.obs b { color: var(--ink); font-weight: 500; }
+.spark { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; align-items: end; height: 30px; }
+.spark span { background: var(--h4); border-radius: 2px 2px 0 0; min-height: 1px; }
+.spark span.pk { background: var(--h6); }
+.spark-l { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.62rem; color: var(--ink-3); margin-top: -0.3rem; }
+.credit { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-3); overflow-wrap: anywhere; line-height: 1.4; }
+.credit a { color: var(--ink-3); }
+.links { display: flex; gap: 1rem; font-family: var(--mono); font-size: 0.75rem; }
+.empty { grid-column: 1 / -1; padding: 3rem 0; text-align: center; font-family: var(--mono); color: var(--ink-2); }
+footer { border-top: 1px solid var(--line); padding-top: 1.25rem; font-family: var(--mono); font-size: 0.78rem; color: var(--ink-3); display: grid; gap: 0.5rem; }
+@media (max-width: 560px) { input[type="search"] { width: 100%; } .count { margin-left: 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <nav class="nav" aria-label="Páginas">
+    <a href="./" data-i18n="navA">Análise</a>
+    <a href="especies.html" aria-current="page" data-i18n="navE">Espécies</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Idioma / Language">
+    <button type="button" data-lang="pt" aria-pressed="true">PT</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</div>
+
+<header class="hero">
+  <span class="eyebrow" data-i18n="eye">Catálogo · Lista Vermelha da UICN</span>
+  <h1 id="h1"></h1>
+  <p class="lead" data-i18n="lead"></p>
+  <div class="rl">
+    <span class="label" data-i18n="rlTitle"></span>
+    <div class="rl-bar" id="rl-bar" role="group"></div>
+    <div class="rl-key" id="rl-key"></div>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="control">
+    <span class="label" id="l-grupo" data-i18n="fGrupo"></span>
+    <div class="seg" role="group" aria-labelledby="l-grupo" id="seg-grupo"></div>
+  </div>
+  <div class="control">
+    <label class="label" for="sel-ord" data-i18n="fOrd"></label>
+    <select id="sel-ord"></select>
+  </div>
+  <div class="control">
+    <label class="label" for="procurar" data-i18n="fProc"></label>
+    <input type="search" id="procurar" autocomplete="off">
+  </div>
+  <span class="count" id="count"></span>
+</div>
+
+<main class="grid" id="grid"></main>
+
+<footer>
+  <span data-i18n="foot1"></span>
+  <span data-i18n="foot2"></span>
+</footer>
+
+</div>
+
+<script>
+window.COMUM = {
+  nomes: {
+    pt: {
+      "Physeter macrocephalus": "Cachalote", "Balaenoptera musculus": "Baleia-azul",
+      "Balaenoptera physalus": "Baleia-comum", "Balaenoptera borealis": "Baleia-sardinheira",
+      "Balaenoptera acutorostrata": "Baleia-anã", "Balaenoptera edeni": "Baleia-de-Bryde",
+      "Megaptera novaeangliae": "Baleia-de-bossa", "Eubalaena glacialis": "Baleia-franca-do-atlântico-norte",
+      "Delphinus delphis": "Golfinho-comum", "Tursiops truncatus": "Roaz",
+      "Stenella coeruleoalba": "Golfinho-riscado", "Stenella frontalis": "Golfinho-pintado-do-atlântico",
+      "Stenella attenuata": "Golfinho-pintado-pantropical", "Stenella longirostris": "Golfinho-rotador",
+      "Stenella clymene": "Golfinho-de-clymene", "Grampus griseus": "Grampo", "Orcinus orca": "Orca",
+      "Pseudorca crassidens": "Falsa-orca", "Globicephala macrorhynchus": "Baleia-piloto-tropical",
+      "Globicephala melas": "Baleia-piloto", "Steno bredanensis": "Caldeirão",
+      "Ziphius cavirostris": "Baleia-de-bico-de-Cuvier", "Phocoena phocoena": "Boto",
+      "Hyperoodon ampullatus": "Botinhoso", "Kogia breviceps": "Cachalote-pigmeu", "Kogia sima": "Cachalote-anão",
+      "Lagenorhynchus albirostris": "Golfinho-de-bico-branco", "Mesoplodon bidens": "Baleia-de-bico-de-Sowerby",
+      "Mesoplodon densirostris": "Baleia-de-bico-de-Blainville", "Mesoplodon europaeus": "Baleia-de-bico-de-Gervais",
+      "Mesoplodon mirus": "Baleia-de-bico-de-True"
+    },
+    en: {
+      "Physeter macrocephalus": "Sperm whale", "Balaenoptera musculus": "Blue whale",
+      "Balaenoptera physalus": "Fin whale", "Balaenoptera borealis": "Sei whale",
+      "Balaenoptera acutorostrata": "Common minke whale", "Balaenoptera edeni": "Bryde's whale",
+      "Megaptera novaeangliae": "Humpback whale", "Eubalaena glacialis": "North Atlantic right whale",
+      "Delphinus delphis": "Common dolphin", "Tursiops truncatus": "Bottlenose dolphin",
+      "Stenella coeruleoalba": "Striped dolphin", "Stenella frontalis": "Atlantic spotted dolphin",
+      "Stenella attenuata": "Pantropical spotted dolphin", "Stenella longirostris": "Spinner dolphin",
+      "Stenella clymene": "Clymene dolphin", "Grampus griseus": "Risso's dolphin", "Orcinus orca": "Killer whale",
+      "Pseudorca crassidens": "False killer whale", "Globicephala macrorhynchus": "Short-finned pilot whale",
+      "Globicephala melas": "Long-finned pilot whale", "Steno bredanensis": "Rough-toothed dolphin",
+      "Ziphius cavirostris": "Cuvier's beaked whale", "Phocoena phocoena": "Harbour porpoise",
+      "Hyperoodon ampullatus": "Northern bottlenose whale", "Kogia breviceps": "Pygmy sperm whale", "Kogia sima": "Dwarf sperm whale",
+      "Lagenorhynchus albirostris": "White-beaked dolphin", "Mesoplodon bidens": "Sowerby's beaked whale",
+      "Mesoplodon densirostris": "Blainville's beaked whale", "Mesoplodon europaeus": "Gervais' beaked whale",
+      "Mesoplodon mirus": "True's beaked whale"
+    }
+  },
+  // Estado de conservação global (Lista Vermelha da UICN); as espécies que faltam são LC
+  iucn: {
+    "Eubalaena glacialis": "CR", "Balaenoptera musculus": "EN", "Balaenoptera borealis": "EN",
+    "Balaenoptera physalus": "VU", "Physeter macrocephalus": "VU",
+    "Pseudorca crassidens": "NT", "Hyperoodon ampullatus": "NT", "Orcinus orca": "DD"
+  },
+  cor: { CR: "#d81e05", EN: "#fc7f3f", VU: "#f9e814", NT: "#cce226", LC: "#60c659", DD: "#d1d1c6" },
+  rotulos: {
+    pt: { CR: "Criticamente em perigo", EN: "Em perigo", VU: "Vulnerável", NT: "Quase ameaçada", LC: "Pouco preocupante", DD: "Dados insuficientes" },
+    en: { CR: "Critically Endangered", EN: "Endangered", VU: "Vulnerable", NT: "Near Threatened", LC: "Least Concern", DD: "Data Deficient" }
+  }
+};
+// Silhuetas laterais (cabeça à direita), viewBox 0 0 64 24, preenchidas com currentColor
+window.ICONES = {
+  golfinho: "M62 13.4C59.5 13.7 57.5 14.5 54.5 15.6C46 18.2 34 18.6 24 17.2C18 16.3 13 14.8 9 13.4L3.8 17.6C4.3 15.4 5 13.8 6.4 12.5C5 11.4 4.2 9.6 3.6 7.2L9.2 11.2C14 10 19 8.8 25.4 8C25.8 6.2 25 4.3 22.8 2.6C27.4 3 31 5 33.6 7.3C42 7.2 49.5 8.6 54.8 10.9C57.2 11.8 59.6 12.5 62 13.4Z M42 16.8C40.4 18.6 39 20 37.6 21.4C40.6 20.8 43.2 19.2 45.4 17.4Z",
+  cabeca_redonda: "M61.5 13.6C61 16 58 17.4 52 18C43 19 33 18.8 24 17.4C18 16.4 13 14.9 9 13.4L3.8 17.6C4.3 15.4 5 13.8 6.4 12.5C5 11.4 4.2 9.6 3.6 7.2L9.2 11.2C14 9.8 19 8.6 26 7.8C27 5.6 27.2 3.8 26.4 2.4C30 3.2 33 5 35.4 7.3C43 7 51 7.4 56 8.8C60 10 61.8 11.6 61.5 13.6Z M44 18.2C42.4 19.8 41 21 39.4 22.2C42.6 21.8 45.4 20.4 47.4 18.6Z",
+  orca: "M61.5 13.6C61 16 58 17.6 52 18.2C43 19.2 33 19 24 17.6C18 16.6 13 15 9 13.4L3.6 17.8C4.1 15.5 4.9 13.8 6.3 12.5C4.9 11.3 4 9.6 3.4 7.1L9.2 11.2C14 9.8 20 8.6 28 7.8L29.6 0.8L33.6 7.4C42 7 51 7.4 56 8.8C60 10 61.8 11.6 61.5 13.6Z M44 18.4C42.4 20 41 21.4 39.4 22.8C43 22.4 45.6 20.8 47.6 18.8Z",
+  baleia: "M63 12.2C60.5 11 55 9.8 46 9.6C36 9.4 26 10 18.6 10.6L17.6 8.6C16.6 9.4 16 10.2 15.4 11C13 11.4 10.6 12 8.6 12.6L3 16.8C3.4 14.8 4.2 13.2 5.6 12.2C4.2 11.2 3.4 9.6 2.8 7.4L8.6 11.4C13 13.8 20 15.6 30 16.6C40 17.4 50 16.8 56 15.2C59.4 14.4 61.8 13.4 63 12.2Z M41 16.8C39.6 18.4 38.4 19.6 37 20.8C39.8 20.4 42.2 19 44 17.4Z",
+  cachalote: "M62.6 9.2C62.8 11.6 62.4 13.8 61.4 15.2C59 16 55 16.2 52 16.4C49 17.8 44 18.6 36 18.6C28 18.4 20 16.6 14 14.4L9.4 13.2L4 17.4C4.4 15.2 5.2 13.6 6.6 12.4C5.2 11.4 4.4 9.8 3.8 7.4L9.6 11.2C14 10.4 18 9.6 22 8.8L24.4 7.6L26.4 8.4C33 7 42 5.6 52 5.4C58 5.4 62 6.6 62.6 9.2Z M44 18.4C42.8 19.8 41.6 21 40.2 22C43 21.6 45.2 20.4 46.8 18.8Z",
+  bico: "M63 13.2C61 13.2 59.6 13.6 58 14.4C52 17.2 42 18 32 17.6C24 17.2 16 15.6 10 13.6L4.2 17.6C4.6 15.4 5.4 13.8 6.8 12.6C5.4 11.4 4.6 9.8 4 7.4L9.8 11.4C14 10.6 18 9.8 21 9.4C21.4 8 21 6.6 19.8 5.6C22.6 6 24.6 7.4 26 9C34 8.4 44 8.6 52 9.6C55.4 10.2 57.4 11.2 58.6 12.2C60 12.6 61.6 12.8 63 13.2Z M44 17.4C42.8 18.8 41.6 19.8 40.4 20.8C43 20.4 45 19.4 46.6 18Z",
+  boto: "M58 13.4C57.6 15.6 55 17.4 49 18.2C41 19.2 32 18.8 25 17.4C19.6 16.4 15 14.8 11.4 13.4L6.4 17.4C6.8 15.2 7.6 13.6 9 12.4C7.6 11.2 6.8 9.6 6.2 7.4L11.6 11.2C16 9.8 22 8.6 28 8L32 3.8L34.2 7.6C41 7.2 48 7.8 52.4 9C56 10 58.2 11.4 58 13.4Z M42 18.2C40.6 19.6 39.4 20.8 38 21.8C40.8 21.4 43.2 20.2 45 18.6Z"
+};
+// Grupo de cada espécie
+window.GRUPO = {
+  "Delphinus delphis": "golfinho", "Tursiops truncatus": "golfinho", "Stenella coeruleoalba": "golfinho",
+  "Stenella frontalis": "golfinho", "Stenella attenuata": "golfinho", "Stenella longirostris": "golfinho",
+  "Stenella clymene": "golfinho", "Steno bredanensis": "golfinho", "Lagenorhynchus albirostris": "golfinho",
+  "Globicephala macrorhynchus": "cabeca_redonda", "Globicephala melas": "cabeca_redonda",
+  "Grampus griseus": "cabeca_redonda", "Pseudorca crassidens": "cabeca_redonda",
+  "Orcinus orca": "orca",
+  "Balaenoptera physalus": "baleia", "Balaenoptera musculus": "baleia", "Balaenoptera borealis": "baleia",
+  "Balaenoptera acutorostrata": "baleia", "Balaenoptera edeni": "baleia", "Megaptera novaeangliae": "baleia",
+  "Eubalaena glacialis": "baleia",
+  "Physeter macrocephalus": "cachalote", "Kogia breviceps": "cachalote", "Kogia sima": "cachalote",
+  "Ziphius cavirostris": "bico", "Hyperoodon ampullatus": "bico", "Mesoplodon bidens": "bico",
+  "Mesoplodon densirostris": "bico", "Mesoplodon europaeus": "bico", "Mesoplodon mirus": "bico",
+  "Phocoena phocoena": "boto"
+};
+window.ESPECIES = [{"s":"Delphinus delphis","fam":"Delphinidae","sub":"odo","total":37395,"reg":{"Açores":34667,"Madeira":391,"Continente":2337},"meses":[514,849,1250,2977,6773,7482,6553,4522,3282,1941,848,404],"foto":"fotos/delphinus_delphis.jpg","credito":{"autor":"NOAA NMFS","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Common_dolphin_noaa.jpg"},"ilustr":false},{"s":"Physeter macrocephalus","fam":"Physeteridae","sub":"odo","total":35674,"reg":{"Açores":34795,"Madeira":778,"Continente":101},"meses":[175,174,445,1771,3282,6622,9648,6768,4327,1786,484,192],"foto":"fotos/physeter_macrocephalus.jpg","credito":{"autor":"Gabriel Barathieu","licenca":"CC BY-SA 2.0","pagina":"https://commons.wikimedia.org/wiki/File:Mother_and_baby_sperm_whale.jpg"},"ilustr":false},{"s":"Stenella frontalis","fam":"Delphinidae","sub":"odo","total":17416,"reg":{"Açores":16629,"Madeira":488,"Continente":299},"meses":[28,20,17,12,180,1307,6057,6042,2614,879,218,42],"foto":"fotos/stenella_frontalis.jpg","credito":{"autor":"NOAA Southeast Fisheries Science Center","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Atlantic_spotted_dolphin_(Stenella_frontalis)_NOAA.jpg"},"ilustr":false},{"s":"Tursiops truncatus","fam":"Delphinidae","sub":"odo","total":15697,"reg":{"Açores":14575,"Madeira":410,"Continente":712},"meses":[132,228,518,1055,1998,2525,2932,2985,1976,943,310,95],"foto":"fotos/tursiops_truncatus.jpg","credito":{"autor":"NASA","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Tursiops_truncatus_01-cropped.jpg"},"ilustr":false},{"s":"Grampus griseus","fam":"Delphinidae","sub":"odo","total":8473,"reg":{"Açores":8381,"Madeira":29,"Continente":63},"meses":[25,46,97,637,1113,1499,1681,1791,917,483,101,83],"foto":"fotos/grampus_griseus.jpg","credito":{"autor":"AliceMartinelli8","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Grampo.jpg"},"ilustr":false},{"s":"Balaenoptera physalus","fam":"Balaenopteridae","sub":"mys","total":6237,"reg":{"Açores":6063,"Madeira":33,"Continente":141},"meses":[41,100,332,1155,2553,1195,480,219,47,61,40,14],"foto":"fotos/balaenoptera_physalus.jpg","credito":{"autor":"Aqqa Rosing-Asvid - Visit Greenland","licenca":"CC BY 2.0","pagina":"https://commons.wikimedia.org/wiki/File:Finhval_(1).jpg"},"ilustr":false},{"s":"Globicephala macrorhynchus","fam":"Delphinidae","sub":"odo","total":5229,"reg":{"Açores":2902,"Madeira":2320,"Continente":7},"meses":[117,156,143,126,361,1152,1146,728,399,479,279,143],"foto":"fotos/globicephala_macrorhynchus.jpg","credito":{"autor":"Martina Nolte","licenca":"CC BY-SA 3.0 de","pagina":"https://commons.wikimedia.org/wiki/File:Globicephala_macrorhynchus_Kurzflossen-Grindwal_DSCF8148.JPG"},"ilustr":false},{"s":"Stenella coeruleoalba","fam":"Delphinidae","sub":"odo","total":3817,"reg":{"Açores":3488,"Madeira":72,"Continente":257},"meses":[14,35,102,250,408,986,900,648,305,149,11,9],"foto":"fotos/stenella_coeruleoalba.jpg","credito":{"autor":"Wanax01","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Stenella_coeruleoalba_Ligurian_Sea_02_-_brighter.jpg"},"ilustr":false},{"s":"Balaenoptera borealis","fam":"Balaenopteridae","sub":"mys","total":2633,"reg":{"Açores":2601,"Madeira":19,"Continente":13},"meses":[9,2,57,356,474,626,411,333,225,101,35,4],"foto":"fotos/balaenoptera_borealis.jpg","credito":{"autor":"Christin Khan, NOAA / NEFSC","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Sei_whale_mother_and_calf_Christin_Khan_NOAA.jpg"},"ilustr":false},{"s":"Balaenoptera musculus","fam":"Balaenopteridae","sub":"mys","total":2376,"reg":{"Açores":2364,"Madeira":7,"Continente":5},"meses":[0,2,149,848,1067,266,23,4,9,8,0,0],"foto":"fotos/balaenoptera_musculus.jpg","credito":{"autor":"NOAA Photo Library","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Anim1754_-_Flickr_-_NOAA_Photo_Library.jpg"},"ilustr":false},{"s":"Megaptera novaeangliae","fam":"Balaenopteridae","sub":"mys","total":1202,"reg":{"Açores":1166,"Madeira":28,"Continente":8},"meses":[24,22,138,296,395,155,97,20,11,22,5,17],"foto":"fotos/megaptera_novaeangliae.jpg","credito":{"autor":"Juan Cruzado Cortés","licenca":"CC BY 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Humpback_whale_breaching_off_Cabo_San_Lucas.jpg"},"ilustr":false},{"s":"Steno bredanensis","fam":"Delphinidae","sub":"odo","total":1119,"reg":{"Madeira":1118,"Continente":1},"meses":[0,0,0,0,8,27,365,414,202,58,32,13],"foto":"fotos/steno_bredanensis.jpg","credito":{"autor":"Laurent Bouveret","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Steno_bredanensis_LB_1.jpg"},"ilustr":false},{"s":"Pseudorca crassidens","fam":"Delphinidae","sub":"odo","total":1036,"reg":{"Açores":1015,"Madeira":6,"Continente":15},"meses":[1,1,36,132,76,132,292,202,71,60,21,12],"foto":"fotos/pseudorca_crassidens.jpg","credito":{"autor":"Stefan Thiesen Buntrabe","licenca":"CC BY 3.0","pagina":"https://commons.wikimedia.org/wiki/File:Pseudoorca_Crassidens_-_False_Killer_Whale.jpg"},"ilustr":false},{"s":"Hyperoodon ampullatus","fam":"Ziphiidae","sub":"odo","total":694,"reg":{"Açores":686,"Madeira":2,"Continente":6},"meses":[0,0,0,1,10,45,455,166,16,1,0,0],"foto":"fotos/hyperoodon_ampullatus.jpg","credito":{"autor":"Saana Isojunno","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Hyperoodon_ampullatus_jumping.jpg"},"ilustr":false},{"s":"Balaenoptera edeni","fam":"Balaenopteridae","sub":"mys","total":624,"reg":{"Açores":533,"Madeira":81,"Continente":10},"meses":[2,0,0,0,5,18,110,380,84,23,1,1],"foto":"fotos/balaenoptera_edeni.jpg","credito":{"autor":"","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Balaenoptera_brydei.jpg"},"ilustr":false},{"s":"Mesoplodon bidens","fam":"Ziphiidae","sub":"odo","total":505,"reg":{"Açores":504,"Madeira":1},"meses":[0,0,0,4,3,62,234,177,23,1,1,0],"foto":"fotos/mesoplodon_bidens.jpg","credito":{"autor":"Jörg Mazur","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Mesoplodon_bidens_2.jpg"},"ilustr":true},{"s":"Orcinus orca","fam":"Delphinidae","sub":"odo","total":480,"reg":{"Açores":338,"Madeira":22,"Continente":120},"meses":[6,10,53,109,109,75,50,27,22,9,6,4],"foto":"fotos/orcinus_orca.jpg","credito":{"autor":"Robert Pittman","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Killerwhales_jumping.jpg"},"ilustr":false},{"s":"Balaenoptera acutorostrata","fam":"Balaenopteridae","sub":"mys","total":373,"reg":{"Açores":232,"Madeira":7,"Continente":134},"meses":[3,1,8,58,50,32,68,61,54,24,4,10],"foto":"fotos/balaenoptera_acutorostrata.jpg","credito":{"autor":"National Marine Sanctuaries","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:SBNMS_-_Minke_Whale_-_Breach_(28670557361).jpg"},"ilustr":false},{"s":"Ziphius cavirostris","fam":"Ziphiidae","sub":"odo","total":343,"reg":{"Açores":281,"Madeira":3,"Continente":59},"meses":[0,1,10,8,18,49,105,99,39,13,1,0],"foto":"fotos/ziphius_cavirostris.jpg","credito":{"autor":"Jörg Mazur","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Ziphius_carvirostris.jpg"},"ilustr":true},{"s":"Mesoplodon densirostris","fam":"Ziphiidae","sub":"odo","total":126,"reg":{"Açores":96,"Madeira":21,"Continente":9},"meses":[2,5,4,3,14,15,24,32,17,7,3,0],"foto":null,"credito":null},{"s":"Phocoena phocoena","fam":"Phocoenidae","sub":"odo","total":114,"reg":{"Açores":6,"Madeira":1,"Continente":107},"meses":[3,4,13,6,8,7,13,16,16,12,5,11],"foto":"fotos/phocoena_phocoena.jpg","credito":{"autor":"Ecomare/Salko de Wolf","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Ecomare_-_bruinvis_Michael_in_2015_(bruinvis-michael2015-9313-sw).jpg"},"ilustr":false},{"s":"Globicephala melas","fam":"Delphinidae","sub":"odo","total":108,"reg":{"Açores":60,"Madeira":23,"Continente":25},"meses":[0,0,3,10,18,24,27,6,12,2,6,0],"foto":"fotos/globicephala_melas.jpg","credito":{"autor":"gailhampshire from Cradley, Malvern, U.K","licenca":"CC BY 2.0","pagina":"https://commons.wikimedia.org/wiki/File:Pilot_Whale_-_Flickr_-_gailhampshire.jpg"},"ilustr":false},{"s":"Mesoplodon mirus","fam":"Ziphiidae","sub":"odo","total":23,"reg":{"Açores":23},"meses":[0,0,6,0,13,2,2,0,0,0,0,0],"foto":"fotos/mesoplodon_mirus.jpg","credito":{"autor":"Roland Edler","licenca":"CC BY 4.0","pagina":"https://commons.wikimedia.org/wiki/File:The_True%27s_beaked_whale_photographed_underwater.jpg"},"ilustr":false},{"s":"Mesoplodon europaeus","fam":"Ziphiidae","sub":"odo","total":18,"reg":{"Açores":11,"Madeira":2,"Continente":5},"meses":[0,0,0,0,0,5,10,1,2,0,0,0],"foto":"fotos/mesoplodon_europaeus.jpg","credito":{"autor":"Jörg Mazur","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Mesoplodon_europaeus_2.jpg"},"ilustr":true},{"s":"Kogia breviceps","fam":"Kogiidae","sub":"odo","total":16,"reg":{"Açores":14,"Madeira":2},"meses":[0,0,1,0,0,2,12,0,0,1,0,0],"foto":null,"credito":null},{"s":"Stenella longirostris","fam":"Delphinidae","sub":"odo","total":12,"reg":{"Madeira":2,"Continente":10},"meses":[0,0,0,0,0,0,0,12,0,0,0,0],"foto":"fotos/stenella_longirostris.jpg","credito":{"autor":"Charles J. Sharp","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Gray%27s_spinner_dolphin_(Stenella_longirostris_longirostris)_Panglao_(cropped).jpg"},"ilustr":false},{"s":"Kogia sima","fam":"Kogiidae","sub":"odo","total":6,"reg":{"Açores":5,"Continente":1},"meses":[0,0,0,0,1,0,4,0,1,0,0,0],"foto":"fotos/kogia_sima.jpg","credito":{"autor":"Robert Pitman (NOAA)","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Dwarf_sperm_whale_(NOAA_Pitman).jpg"},"ilustr":false},{"s":"Stenella clymene","fam":"Delphinidae","sub":"odo","total":3,"reg":{"Continente":3},"meses":[0,0,0,0,0,0,0,2,1,0,0,0],"foto":"fotos/stenella_clymene.jpg","credito":{"autor":"Keith Mullin (NOAA)","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:Clymenes.jpg"},"ilustr":false},{"s":"Stenella attenuata","fam":"Delphinidae","sub":"odo","total":2,"reg":{"Açores":1,"Continente":1},"meses":[0,0,0,0,0,0,1,0,1,0,0,0],"foto":"fotos/stenella_attenuata.jpg","credito":{"autor":"Julio-César Chávez","licenca":"CC BY 4.0","pagina":"https://commons.wikimedia.org/wiki/File:Pantropical_spotted_dolphin_swimming_off_the_coast_of_Costa_Rica.jpg"},"ilustr":false},{"s":"Lagenorhynchus albirostris","fam":"Delphinidae","sub":"odo","total":2,"reg":{"Continente":2},"meses":[0,0,0,0,1,0,0,0,0,1,0,0],"foto":"fotos/lagenorhynchus_albirostris.jpg","credito":{"autor":"Charles J. Sharp","licenca":"CC BY-SA 4.0","pagina":"https://commons.wikimedia.org/wiki/File:White-beaked_dolphins_(Lagenorhynchus_albirostris)_bow-riding_Eyjafjordur.jpg"},"ilustr":false},{"s":"Eubalaena glacialis","fam":"Balaenidae","sub":"mys","total":1,"reg":{"Açores":1},"meses":[1,0,0,0,0,0,0,0,0,0,0,0],"foto":"fotos/eubalaena_glacialis.jpg","credito":{"autor":"National Marine Sanctuaries","licenca":"Public domain","pagina":"https://commons.wikimedia.org/wiki/File:GRNMS_-_Right_Whales_(31361234602).jpg"},"ilustr":false}];
+</script>
+<script>
+(function () {
+  const E = window.ESPECIES;            // [{s, fam, sub, total, reg: {Açores, Madeira, Continente}, meses: [12], foto, credito}]
+  const C = window.COMUM;
+  const ORDEM_RL = ["CR", "EN", "VU", "NT", "LC", "DD"];
+  const T = {
+    pt: {
+      navA: "Análise", navE: "Espécies", eye: "Catálogo · Lista Vermelha da UICN",
+      h1: n => `As ${n} espécies observadas em Portugal`,
+      lead: "Todas as espécies de cetáceos com observações registadas no GBIF entre 2000 e 2026, com o estado de conservação global, o número de observações em cada região e o mês em que são mais vistas.",
+      rlTitle: "Estado de conservação global · clique numa categoria para filtrar",
+      fGrupo: "Grupo", fOrd: "Ordenar", fProc: "Procurar",
+      grupos: { todas: "Todas", mys: "Baleias de barbas", odo: "Com dentes" },
+      ord: { obs: "Mais observadas", nome: "Nome", rl: "Mais ameaçadas" },
+      ph: "nome comum ou científico",
+      count: (n, t) => n === t ? `${n} espécies` : `${n} de ${t} espécies`,
+      sub: { mys: "Misticetos (baleias de barbas)", odo: "Odontocetos (com dentes)" },
+      obs: "observações", pico: m => `pico em ${m}`, sem: "sem registos",
+      reg: { "Açores": "Açores", "Madeira": "Madeira", "Continente": "Continente" },
+      meses: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+      mesesL: ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"],
+      foto: "Foto", ilustr: "Ilustração", semAutor: "autor não indicado", semFoto: "Sem foto com licença livre; silhueta do grupo.",
+      iucnLink: "Ver na Lista Vermelha", vazio: "Nenhuma espécie corresponde a estes filtros.",
+      foot1: "Estado de conservação: avaliação global da Lista Vermelha da UICN (iucnredlist.org). Confirme sempre a avaliação mais recente.",
+      foot2: "Fotos: Wikimedia Commons, com o autor e a licença indicados em cada ficha. Observações: GBIF.org (7 October 2026) https://doi.org/10.15468/dl.mzf9rc"
+    },
+    en: {
+      navA: "Analysis", navE: "Species", eye: "Catalogue · IUCN Red List",
+      h1: n => `The ${n} species recorded in Portugal`,
+      lead: "Every cetacean species with sightings recorded on GBIF between 2000 and 2026, with its global conservation status, the number of sightings in each region and the month when it is seen most.",
+      rlTitle: "Global conservation status · click a category to filter",
+      fGrupo: "Group", fOrd: "Sort", fProc: "Search",
+      grupos: { todas: "All", mys: "Baleen whales", odo: "Toothed" },
+      ord: { obs: "Most sighted", nome: "Name", rl: "Most threatened" },
+      ph: "common or scientific name",
+      count: (n, t) => n === t ? `${n} species` : `${n} of ${t} species`,
+      sub: { mys: "Mysticetes (baleen whales)", odo: "Odontocetes (toothed)" },
+      obs: "sightings", pico: m => `peak in ${m}`, sem: "no records",
+      reg: { "Açores": "Azores", "Madeira": "Madeira", "Continente": "Mainland" },
+      meses: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      mesesL: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      foto: "Photo", ilustr: "Illustration", semAutor: "author not given", semFoto: "No freely licensed photo; group silhouette.",
+      iucnLink: "See on the Red List", vazio: "No species match these filters.",
+      foot1: "Conservation status: IUCN Red List global assessment (iucnredlist.org). Always check the latest assessment.",
+      foot2: "Photos: Wikimedia Commons, with author and licence shown on each card. Sightings: GBIF.org (7 October 2026) https://doi.org/10.15468/dl.mzf9rc"
+    }
+  };
+  let lang = "pt";
+  try { const g = localStorage.getItem("cet-lang"); if (g === "en" || g === "pt") lang = g; } catch (e) {}
+  const t = k => T[lang][k];
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString(lang === "pt" ? "pt-PT" : "en-GB");
+  const nome = s => C.nomes[lang][s] || s;
+  const rl = s => C.iucn[s] || "LC";
+  const esc = x => String(x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const estado = { grupo: "todas", ord: "obs", rl: null, q: "" };
+
+  function silhueta(s) { const d = window.ICONES[window.GRUPO[s]]; return d ? `<svg viewBox="0 0 64 24" aria-hidden="true"><path d="${d}" fill="currentColor"/></svg>` : ""; }
+
+  function textos() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(el => { const v = t(el.dataset.i18n); if (typeof v === "string") el.textContent = v; });
+    $("h1").textContent = t("h1")(E.length);
+    document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+    $("seg-grupo").innerHTML = ["todas", "mys", "odo"].map(g => `<button type="button" data-g="${g}" aria-pressed="${g === estado.grupo}">${t("grupos")[g]}</button>`).join("");
+    $("sel-ord").innerHTML = ["obs", "nome", "rl"].map(o => `<option value="${o}"${o === estado.ord ? " selected" : ""}>${t("ord")[o]}</option>`).join("");
+    $("procurar").placeholder = t("ph");
+    $("rl-bar").setAttribute("aria-label", t("rlTitle"));
+  }
+
+  function resumoRL() {
+    const n = {}; ORDEM_RL.forEach(c => n[c] = 0); E.forEach(e => n[rl(e.s)]++);
+    $("rl-bar").innerHTML = ORDEM_RL.filter(c => n[c]).map(c =>
+      `<button type="button" data-c="${c}" aria-pressed="${estado.rl === c}" class="${estado.rl && estado.rl !== c ? "dim" : ""}" style="flex:${n[c]} 1 0;background:${C.cor[c]}" title="${C.rotulos[lang][c]}: ${n[c]}">${c}</button>`).join("");
+    $("rl-key").innerHTML = ORDEM_RL.filter(c => n[c]).map(c => `<span><i style="background:${C.cor[c]}"></i>${c} · ${C.rotulos[lang][c]} · <b>${n[c]}</b></span>`).join("");
+  }
+
+  function cartao(e) {
+    const c = rl(e.s), comum = nome(e.s), meses = t("meses");
+    const max = Math.max(...e.meses), pk = e.meses.indexOf(max);
+    const spark = e.meses.map((v, j) => `<span class="${j === pk ? "pk" : ""}" style="height:${max ? Math.max(3, v / max * 100).toFixed(1) : 3}%" title="${t("mesesL")[j]}: ${fmt(v)}"></span>`).join("");
+    const regs = ["Açores", "Madeira", "Continente"].map(r => `<span>${t("reg")[r]} <b>${e.reg[r] ? fmt(e.reg[r]) : "–"}</b></span>`).join("");
+    const foto = e.foto
+      ? `<img src="${e.foto}" alt="${esc(comum)} (${e.s})" loading="lazy">`
+      : silhueta(e.s);
+    const cred = e.foto && e.credito
+      ? `${e.ilustr ? t("ilustr") : t("foto")}: ${esc(e.credito.autor || t("semAutor"))} · <a href="${esc(e.credito.pagina)}" target="_blank" rel="noopener">${esc(e.credito.licenca)}</a>, Wikimedia Commons`
+      : t("semFoto");
+    const iucnUrl = "https://www.iucnredlist.org/search?query=" + encodeURIComponent(e.s);
+    return `<article class="card">
+      <div class="photo${e.ilustr ? " ilustr" : ""}">${foto}<span class="badge"><b style="background:${C.cor[c]}">${c}</b>${C.rotulos[lang][c]}</span></div>
+      <div class="body">
+        <div class="names"><h2>${esc(comum)}</h2><span class="sci">${e.s}</span></div>
+        <span class="taxo">${e.fam} · ${t("sub")[e.sub]}</span>
+        <div class="obs"><span><b>${fmt(e.total)}</b> ${t("obs")}</span><span>${max ? t("pico")(t("mesesL")[pk]) : t("sem")}</span></div>
+        <div class="obs">${regs}</div>
+        <div class="spark" aria-hidden="true">${spark}</div>
+        <div class="spark-l" aria-hidden="true"><span>${meses[0]}</span><span>${meses[5]}</span><span>${meses[11]}</span></div>
+        <div class="links"><a href="${iucnUrl}" target="_blank" rel="noopener">${t("iucnLink")} ↗</a></div>
+        <p class="credit">${cred}</p>
+      </div>
+    </article>`;
+  }
+
+  function desenhar() {
+    const q = estado.q.trim().toLowerCase();
+    let lista = E.filter(e =>
+      (estado.grupo === "todas" || e.sub === estado.grupo) &&
+      (!estado.rl || rl(e.s) === estado.rl) &&
+      (!q || e.s.toLowerCase().includes(q) || nome(e.s).toLowerCase().includes(q) ||
+       C.nomes.pt[e.s]?.toLowerCase().includes(q) || C.nomes.en[e.s]?.toLowerCase().includes(q)));
+    if (estado.ord === "obs") lista.sort((a, b) => b.total - a.total);
+    if (estado.ord === "nome") lista.sort((a, b) => nome(a.s).localeCompare(nome(b.s), lang));
+    if (estado.ord === "rl") lista.sort((a, b) => ORDEM_RL.indexOf(rl(a.s)) - ORDEM_RL.indexOf(rl(b.s)) || b.total - a.total);
+    $("grid").innerHTML = lista.length ? lista.map(cartao).join("") : `<p class="empty">${t("vazio")}</p>`;
+    $("count").textContent = t("count")(lista.length, E.length);
+  }
+
+  $("seg-grupo").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; estado.grupo = b.dataset.g;
+    $("seg-grupo").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); desenhar(); });
+  $("sel-ord").addEventListener("change", e => { estado.ord = e.target.value; desenhar(); });
+  $("procurar").addEventListener("input", e => { estado.q = e.target.value; desenhar(); });
+  $("rl-bar").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return;
+    estado.rl = estado.rl === b.dataset.c ? null : b.dataset.c; resumoRL(); desenhar(); });
+  document.querySelector(".lang").addEventListener("click", e => { const b = e.target.closest("button"); if (!b || b.dataset.lang === lang) return;
+    lang = b.dataset.lang; try { localStorage.setItem("cet-lang", lang); } catch (err) {} tudo(); });
+
+  function tudo() { textos(); resumoRL(); desenhar(); }
+  tudo();
+})();
+</script>
+</body>
+</html>
